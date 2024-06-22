@@ -1,75 +1,100 @@
-job "nginx" {
+job "nginx-proxy" {
   datacenters = ["dc1"]
-  type = "service"
-  group "nginx" {
+  type        = "system"
+
+  update {
+    stagger          = "10s"
+    max_parallel     = 1
+    min_healthy_time = "10s"
+    healthy_deadline = "3m"
+    auto_revert      = false
+    canary           = 0
+  }
+
+  group "nginx-proxy" {
     count = 1
-    task "nginx" {
+
+    restart {
+      attempts = 10
+      interval = "5m"
+      delay    = "25s"
+      mode     = "delay"
+    }
+
+    task "nginx-proxy" {
       driver = "docker"
+
       config {
         image = "nginx"
+
         port_map {
           http = 8080
         }
-        port_map {
-          https = 443
-        }
+
         volumes = [
-          "custom/default.conf:/etc/nginx/conf.d/default.conf"
+          "local:/etc/nginx/conf.d",
         ]
       }
-      template {
-        data = <<EOH
-          server {
-            listen 8080;
-            server_name nginx.service.consul;
-            location /nginx {
-              root /local/data;
-            }
-          }
-        EOH
-        destination = "custom/default.conf"
-      }
-      # consul kv put features/demo 'Consul Rocks!'
-     template {
-        data = <<EOH
-        Nomad Template example (Consul value)
-        <br />
-        <br />
-        {{ if keyExists "features/demo" }}
-        Consul Key Value:  {{ key "features/demo" }}
-        {{ else }}
-          Good morning.
-        {{ end }}
-        <br />
-        <br />
-        Node Environment Information:  <br />
-        node_id:     {{ env "node.unique.id" }} <br/>
-        datacenter:  {{ env "NOMAD_DC" }}
-        EOH
-        destination = "local/data/nginx/index.html"
-      }
+
       resources {
-        cpu    = 100
-        memory = 128
+        cpu    = 500 # 500 MHz
+        memory = 256 # 256MB
+
         network {
           mbits = 10
+
           port "http" {
-              static = 8080
-          }
-          port "https" {
-              static= 443
+            static = 8080
           }
         }
       }
+
       service {
-        name = "nginx"
-        tags = [ "nginx", "web", "urlprefix-/nginx" ]
+        name = "nginx-proxy"
+        tags = ["nginx-proxy"]
         port = "http"
+
         check {
+          name     = "nginx alive"
           type     = "tcp"
+          port     = "http"
           interval = "10s"
           timeout  = "2s"
         }
+      }
+
+      template {
+        data          = <<EOF
+upstream nomad {
+  server 127.0.0.1:4646;
+}
+upstream consul {
+  server 127.0.0.1:8500;
+}
+upstream vault {
+  server 127.0.0.1:8200;
+}
+
+server {
+  listen 8080;
+  server_name 8080-cs-305032714376-default.cs-europe-west1-onse.cloudshell.dev;
+
+  location /nomad/ {
+    proxy_pass http://127.0.0.1:4646;
+  }
+
+  location /consul/ {
+    proxy_pass http://127.0.0.1:8500;
+  }
+
+  location /vault/ {
+    proxy_pass http://127.0.0.1:8200;
+  }
+}
+EOF
+        destination   = "local/load-balancer.conf"
+        change_mode   = "signal"
+        change_signal = "SIGHUP"
       }
     }
   }

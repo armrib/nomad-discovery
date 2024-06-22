@@ -2,13 +2,13 @@
 
 sudo service supervisor start
 
-sudo cp -f nomad/consul/consul.conf /etc/supervisor/conf.d/
-sudo cp -f nomad/vault/vault.conf /etc/supervisor/conf.d/
-sudo cp -f nomad/nomad/nomad.conf /etc/supervisor/conf.d/
+sudo cp -f consul/consul.conf /etc/supervisor/conf.d/
+sudo cp -f vault/vault.conf /etc/supervisor/conf.d/
+sudo cp -f nomad/nomad.conf /etc/supervisor/conf.d/
 
 sudo supervisorctl reread
 sudo supervisorctl update
 
-sudo supervisorctl start consul
-sudo supervisorctl start vault
-sudo supervisorctl start nomad
+sudo supervisorctl restart consul
+sudo supervisorctl restart vault
+sudo supervisorctl restart nomad
