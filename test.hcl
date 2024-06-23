@@ -1,16 +1,18 @@
-job "demo-webapp" {
+job "demo" {
   datacenters = ["dc1"]
 
   group "demo" {
     count = 1
+
     network {
+      
       port "http" {
         to = -1
       }
     }
 
     service {
-      name = "demo-webapp"
+      name = "demo"
       port = "http"
 
       check {
@@ -22,16 +24,16 @@ job "demo-webapp" {
     }
 
     task "server" {
-      env {
-        PORT    = "${NOMAD_PORT_http}"
-        NODE_IP = "${NOMAD_IP_http}"
-      }
-
       driver = "docker"
 
       config {
         image = "hashicorp/demo-webapp-lb-guide"
         ports = ["http"]
+      }
+
+      env {
+        PORT    = "${NOMAD_PORT_http}"
+        NODE_IP = "${NOMAD_IP_http}"
       }
     }
   }
