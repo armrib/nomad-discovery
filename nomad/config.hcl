@@ -1,6 +1,6 @@
 log_level  = "WARN"
 datacenter = "dc1"
-# data_dir   = "/home/armand_ribouillault/nomad/nomad/tmp/data"
+data_dir   = "~/nomad-discovery/nomad/tmp/data"
 advertise {
   http = "internal-ip:4646"
 }
