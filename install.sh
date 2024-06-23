@@ -6,8 +6,8 @@ touch ~/.cloudshell/no-apt-get-warning
 git config --global user.email "armrib88@google.com"
 git config --global user.name "Armand Ribouillault"
 
-sudo apt list | grep "\[installed\]" | grep -v "git\|lsb_release\|coreutils\|gpg\|sudo\|wget\|supervisor\|curl\|openssl\|google\|docker" | cut -d/ -f1 | xargs sudo apt remove -y
-sudo apt install wget gpg coreutils curl
+sudo apt list | grep "\[installed\]" | grep -v "git\|lsb_release\|coreutils\|gpg\|sudo\|wget\|supervisor\|curl\|openssl\|google\|docker\|lib\|make\|apt\|auto" | cut -d/ -f1 | xargs sudo apt remove -y
+sudo apt install wget gpg coreutils curl supervisor
 
 if [ ! -f /etc/apt/sources.list.d/hashicorp.list ] && [ ! -f /usr/share/keyrings/hashicorp-archive-keyring.gpg ]; then
     wget -O- https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
@@ -19,7 +19,7 @@ sudo apt install -y nomad consul vault
 sudo apt autoremove -y
 nomad -v && consul -v && vault -v || echo "nomad or consul or vault not found"
 
-if [ ! -f cni-plugins.tgz ]; then
+if [ -n "$1" ] && [ ! -f cni-plugins.tgz ]; then
     curl -L -o cni-plugins.tgz "https://github.com/containernetworking/plugins/releases/download/v1.0.0/cni-plugins-linux-$([ $(uname -m) = aarch64 ] && echo arm64 || echo amd64)"-v1.0.0.tgz
     sudo mkdir -p /opt/cni/bin
     sudo tar -C /opt/cni/bin -xzf cni-plugins.tgz
