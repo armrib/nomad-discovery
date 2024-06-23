@@ -28,23 +28,22 @@ else
     echo "Nomad is not installed"
 fi
 
-if [ -z "$cni" ] && [ "$cni" = "cni=true" ]; then
-    ## set time to sleep 1 second
-    sleep 1
+## set time to sleep 1 second
+sleep 1
 
-    # Post installation
-    curl -L -o cni-plugins.tgz "https://github.com/containernetworking/plugins/releases/download/v1.0.0/cni-plugins-linux-$( [ $(uname -m) = aarch64 ] && echo arm64 || echo amd64)"-v1.0.0.tgz && \
-        sudo mkdir -p /opt/cni/bin && \
-        sudo tar -C /opt/cni/bin -xzf cni-plugins.tgz
+# Post installation
+curl -L -o cni-plugins.tgz "https://github.com/containernetworking/plugins/releases/download/v1.0.0/cni-plugins-linux-$( [ $(uname -m) = aarch64 ] && echo arm64 || echo amd64)"-v1.0.0.tgz && \
+sudo mkdir -p /opt/cni/bin && \
+sudo tar -C /opt/cni/bin -xzf cni-plugins.tgz
 
-    echo 1 | sudo tee /proc/sys/net/bridge/bridge-nf-call-arptables && \
-        echo 1 | sudo tee /proc/sys/net/bridge/bridge-nf-call-ip6tables && \
-        echo 1 | sudo tee /proc/sys/net/bridge/bridge-nf-call-iptables
+echo 1 | sudo tee /proc/sys/net/bridge/bridge-nf-call-arptables && \
+echo 1 | sudo tee /proc/sys/net/bridge/bridge-nf-call-ip6tables && \
+echo 1 | sudo tee /proc/sys/net/bridge/bridge-nf-call-iptables
 
-    sudo sysctl -w net.bridge.bridge-nf-call-arptables=1
-    sudo sysctl -w net.bridge.bridge-nf-call-ip6tables=1
-    sudo sysctl -w net.bridge.bridge-nf-call-iptables=1
-fi
+sudo sysctl -w net.bridge.bridge-nf-call-arptables=1
+sudo sysctl -w net.bridge.bridge-nf-call-ip6tables=1
+sudo sysctl -w net.bridge.bridge-nf-call-iptables=1
+
 ## set time to sleep 1 second
 sleep 1
 
@@ -60,6 +59,7 @@ if [ $? -eq 0 ]; then
     echo "Consul is installed"
 else
     echo "Consul is not installed"
+    exit 1
 fi
 
 # Download Vault Linux
@@ -74,4 +74,5 @@ if [ $? -eq 0 ]; then
     echo "Vault is installed"
 else
     echo "Vault is not installed"
+    exit 1
 fi

@@ -13,6 +13,15 @@ bash install.sh
 bash start.sh
 ```
 
+## Commands
+```bash
+nomad fmt **/*.hcl
+
+sudo supervisorctl restart nomad && sudo supervisorctl tail -f nomad
+
+nomad run nginx/nginx.hcl && sleep 10 && nomad logs -f -job nginx-proxy
+```
+
 ## References
 
 - [Hashicorp Nomad](https://www.nomadproject.io/)

@@ -41,7 +41,7 @@ job "redis" {
         memory = 256 # 256MB
 
         network {
-          mbits = 10
+          # mbits = 10
 
           port "db" {}
         }

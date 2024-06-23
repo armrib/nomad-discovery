@@ -1,7 +1,5 @@
 log_level     = "WARN"
 ui            = true
-cluster_addr  = "http://127.0.0.1:8201"
-api_addr      = "http://127.0.0.1:8200"
 disable_mlock = true
 
 storage "consul" {
@@ -10,6 +8,6 @@ storage "consul" {
 }
 
 listener "tcp" {
-  address     = "127.0.0.1:8201"
+  address     = "127.0.0.1:8200"
   tls_disable = 1
 }
