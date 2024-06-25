@@ -7,10 +7,6 @@ advertise {
 
 ui {
   enabled = true
-
-  consul {
-    ui_url = "/consul"
-  }
 }
 
 client {
@@ -22,7 +18,7 @@ server {
 }
 
 consul {
-  address = "127.0.0.1:8500"
+  address = "localhost:8500"
 }
 
 plugin "raw_exec" {

@@ -1,21 +1,26 @@
 job "nginx" {
   datacenters = ["dc1"]
-  type        = "system"
+  type        = "service"
+
+  update {
+    stagger      = "10s"
+    max_parallel = 1
+  }
 
   group "nginx" {
     count = 1
 
     network {
       port "http" {
-        static = 8080
+        to = 8080
       }
     }
     task "nginx" {
       driver = "docker"
 
       config {
-        image        = "nginx"
         network_mode = "host"
+        image        = "nginx"
         ports        = ["http"]
         volumes = [
           "local:/etc/nginx/nginx.d",
@@ -44,15 +49,14 @@ job "nginx" {
       template {
         data          = <<EOF
 upstream nomad {
-  ip_hash;
-  server localhost:4646;
+  server 127.0.0.1:4646;
 }
 
 server {
   listen 8080;
 
   location / {
-    proxy_pass http:/nomad;
+    proxy_pass http://nomad;
 
     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
 
