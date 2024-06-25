@@ -19,7 +19,7 @@ nomad fmt **/*.hcl
 
 sudo supervisorctl restart nomad && sudo supervisorctl tail -f nomad
 
-nomad run nginx/nginx.hcl && sleep 10 && nomad logs -f -job nginx
+nomad run nginx/nginx.hcl && sleep 2 && nomad logs -f -job nginx
 
 nomad run test.hcl
 ```
