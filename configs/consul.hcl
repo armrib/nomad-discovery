@@ -1,7 +1,6 @@
 log_level  = "WARN"
 datacenter = "dc1"
-# data_dir   = "/home/armand_ribouillault/nomad-discovery/consul/tmp/data"
-bootstrap = true
+bootstrap  = true
 server     = true
 
 ui_config {

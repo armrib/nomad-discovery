@@ -1,40 +1,22 @@
-job "nginx-proxy" {
+job "nginx" {
   datacenters = ["dc1"]
   type        = "system"
 
-  update {
-    stagger          = "10s"
-    max_parallel     = 1
-    min_healthy_time = "10s"
-    healthy_deadline = "3m"
-    auto_revert      = false
-    canary           = 0
-  }
-
-
-
-  group "nginx-proxy" {
+  group "nginx" {
     count = 1
 
-    restart {
-      attempts = 10
-      interval = "5m"
-      delay    = "25s"
-      mode     = "delay"
-    }
     network {
-      # mbits = 10
-
       port "http" {
         static = 8080
       }
     }
-    task "nginx-proxy" {
+    task "nginx" {
       driver = "docker"
 
       config {
-        image = "nginx"
-        ports = ["http"]
+        image        = "nginx"
+        network_mode = "host"
+        ports        = ["http"]
         volumes = [
           "local:/etc/nginx/nginx.d",
         ]
@@ -46,8 +28,8 @@ job "nginx-proxy" {
       }
 
       service {
-        name = "nginx-proxy"
-        tags = ["nginx-proxy"]
+        name = "nginx"
+        tags = ["nginx"]
         port = "http"
 
         check {
@@ -61,37 +43,38 @@ job "nginx-proxy" {
 
       template {
         data          = <<EOF
-upstream nomad-ws {
+upstream nomad {
   ip_hash;
-  server 127.0.0.1:4646;
-}
-upstream demo {
-{{ range service "demo-webapp" }}
-  server {{ .Address }}:{{ .Port }};
-{{ else }}server 127.0.0.1:65535; # force a 502
-{{ end }}
+  server localhost:4646;
 }
 
 server {
   listen 8080;
 
   location / {
-    proxy_pass http:/nomad-ws;
+    proxy_pass http:/nomad;
 
-    proxy_set_header Host $host;
-    proxy_cache_bypass $http_upgrade;
-    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
 
+    # Nomad blocking queries will remain open for a default of 5 minutes.
+    # Increase the proxy timeout to accommodate this timeout with an
+    # additional grace period.
     proxy_read_timeout 310s;
+
+    # Nomad log streaming uses streaming HTTP requests. In order to
+    # synchronously stream logs from Nomad to NGINX to the browser
+    # proxy buffering needs to be turned off.
     proxy_buffering off;
 
+    # The Upgrade and Connection headers are used to establish
+    # a WebSockets connection.
     proxy_set_header Upgrade $http_upgrade;
     proxy_set_header Connection "upgrade";
 
+    # The default Origin header will be the proxy address, which
+    # will be rejected by Nomad. It must be rewritten to be the
+    # host address instead.
     proxy_set_header Origin "${scheme}://${proxy_host}";
-  }
-  location /demo/ {
-      proxy_pass http://backend;
   }
 }
 EOF

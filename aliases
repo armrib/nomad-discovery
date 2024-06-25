@@ -1,0 +1,13 @@
+alias fmt='nomad fmt **/*.hcl *.hcl'
+function restart {
+    sudo supervisorctl restart ${1%.*} && sudo supervisorctl tail -f ${1%.*}
+}
+function run {
+    nomad run $1 && sleep 2 && nomad logs -f -job ${1%.*}
+}
+function log {
+    nomad logs -job ${1%.*}
+}
+function flog {
+    nomad logs -f -job ${1%.*}
+}

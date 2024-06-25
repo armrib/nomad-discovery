@@ -15,13 +15,10 @@ bash start.sh
 
 ## Commands
 ```bash
-nomad fmt **/*.hcl
-
-sudo supervisorctl restart nomad && sudo supervisorctl tail -f nomad
-
-nomad run nginx/nginx.hcl && sleep 2 && nomad logs -f -job nginx
-
-nomad run test.hcl
+. aliases
+fmt # format hcl files
+restart x # restart service x
+run x # run x.hcl and follow logs
 ```
 
 ## References
