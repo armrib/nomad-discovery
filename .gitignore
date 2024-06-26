@@ -1,3 +1,6 @@
 cni-plugins.tgz
 tmp/
 *.log
+consul/
+nomad/
+alloc_mounts/

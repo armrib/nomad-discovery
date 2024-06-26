@@ -8,19 +8,19 @@ job "nginx" {
     network {
       port "http" {
         to = 8080
-        static = 8080
       }
     }
 
     service {
       name     = "nginx"
       port     = "http"
+      provider = "nomad"
 
-      check {
-        type     = "tcp"
-        interval = "10s"
-        timeout  = "2s"
-      }
+      # check {
+      #   type     = "tcp"
+      #   interval = "10s"
+      #   timeout  = "2s"
+      # }
     }
 
     task "nginx" {
@@ -33,9 +33,8 @@ job "nginx" {
       driver = "docker"
 
       config {
-        network_mode = "host"
-        image        = "nginx:alpine"
-        ports        = ["http"]
+        image = "nginx:alpine"
+        ports = ["http"]
         volumes = [
           "local:/etc/nginx/nginx.d"
         ]
