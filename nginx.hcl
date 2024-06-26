@@ -1,11 +1,6 @@
 job "nginx" {
   datacenters = ["dc1"]
-  type        = "service"
-
-  update {
-    stagger      = "10s"
-    max_parallel = 1
-  }
+  type        = "system"
 
   group "nginx" {
     count = 1
@@ -13,43 +8,43 @@ job "nginx" {
     network {
       port "http" {
         to = 8080
+        static = 8080
       }
     }
+
+    service {
+      name     = "nginx"
+      port     = "http"
+
+      check {
+        type     = "tcp"
+        interval = "10s"
+        timeout  = "2s"
+      }
+    }
+
     task "nginx" {
+
+      resources {
+        cpu    = 50
+        memory = 128
+      }
+
       driver = "docker"
 
       config {
         network_mode = "host"
-        image        = "nginx"
+        image        = "nginx:alpine"
         ports        = ["http"]
         volumes = [
-          "local:/etc/nginx/nginx.d",
+          "local:/etc/nginx/nginx.d"
         ]
-      }
-
-      resources {
-        cpu    = 500 # 500 MHz
-        memory = 256 # 256MB 
-      }
-
-      service {
-        name = "nginx"
-        tags = ["nginx"]
-        port = "http"
-
-        check {
-          name     = "nginx alive"
-          type     = "tcp"
-          port     = "http"
-          interval = "10s"
-          timeout  = "2s"
-        }
       }
 
       template {
         data          = <<EOF
 upstream nomad {
-  server 127.0.0.1:4646;
+  server localhost:4646;
 }
 
 server {

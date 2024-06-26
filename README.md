@@ -2,6 +2,8 @@
 
 ## Installation
 
+I use cloud-shell to test: https://shell.cloud.google.com
+
 To install:
 
 ```bash

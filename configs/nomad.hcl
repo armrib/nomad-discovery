@@ -1,8 +1,10 @@
 log_level  = "WARN"
 datacenter = "dc1"
 
+# Advertise a bogus HTTP address to force the UI
+# to fallback to streaming logs through the proxy.
 advertise {
-  http = "internal-ip:4646"
+  http = "0.0.0.0:4646"
 }
 
 ui {

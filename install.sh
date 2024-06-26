@@ -6,7 +6,7 @@ touch ~/.cloudshell/no-apt-get-warning
 git config --global user.email "armrib88@google.com"
 git config --global user.name "Armand Ribouillault"
 
-sudo apt list | grep "\[installed\]" | grep -v "git\|lsb_release\|coreutils\|gpg\|sudo\|wget\|supervisor\|curl\|openssl\|google\|docker\|lib\|make\|apt\|auto" | cut -d/ -f1 | xargs sudo apt remove -y
+sudo apt remove -y dotnet-runtime-5.0 dotnet-sdk-5.0 dotnet-sdk-6.0 dotnet-sdk-7.0 emacs-nox mercurial openjdk-11-jdk openjdk-17-jdk php-pear php7.4-bcmath php7.4-cgi php7.4-cli php7.4-dev php7.4-mbstring php7.4-mysql php7.4-xml powershell packages-microsoft-prod
 sudo apt install wget gpg coreutils curl supervisor
 
 if [ ! -f /etc/apt/sources.list.d/hashicorp.list ] && [ ! -f /usr/share/keyrings/hashicorp-archive-keyring.gpg ]; then
