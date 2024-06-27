@@ -1,4 +1,4 @@
 server {
-    enable = true
+    enabled = true
     bootstrap_expect = 1
 }
