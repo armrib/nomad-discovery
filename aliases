@@ -1,14 +1,3 @@
 alias fmt='nomad fmt **/*.hcl *.hcl'
 alias net='netstat -tulpn | grep 8080'
-function restart {
-    sudo supervisorctl restart ${1%.*} && sudo supervisorctl tail -f ${1%.*}
-}
-function run {
-    nomad run $1 && sleep 5 && nomad logs -f -job ${1%.*}
-}
-function log {
-    nomad logs -job ${1%.*}
-}
-function flog {
-    nomad logs -f -job ${1%.*}
-}
+alias start='sudo nomad agent -config /etc/nomad.d'

@@ -1,0 +1,3 @@
+client {
+    enable = true
+}
