@@ -1,4 +1,4 @@
-job "demo-webapp" {
+job "demo" {
   datacenters = ["dc1"]
 
   group "demo" {
@@ -10,7 +10,7 @@ job "demo-webapp" {
     }
 
     service {
-      name     = "demo-webapp"
+      name     = "demo"
       port     = "http"
       provider = "nomad"
 
