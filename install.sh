@@ -18,7 +18,7 @@ if [ ! -f .installed ]; then
     fi
 
     sudo apt update
-    sudo apt install -y nomad nginx
+    sudo apt install -y nomad
     sudo apt autoremove -y
     nomad -v || (echo "nomad not found" && exit 1)
 
